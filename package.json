@@ -1,5 +1,5 @@
 {
-    "name": "@yanxlg/react-ts-scripts",
+    "name": "rc-ts-scripts",
     "version": "1.6.1",
     "description": "Configuration and scripts for Create React App.",
     "repository": {
@@ -18,7 +18,7 @@
         "utils"
     ],
     "bin": {
-        "react-ts-scripts": "./bin/react-ts-scripts.js"
+        "rc-ts-scripts": "./bin/rc-ts-scripts.js"
     },
     "dependencies": {
         "tslint": "^5.7.0",
