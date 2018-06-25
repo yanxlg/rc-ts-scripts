@@ -5,3 +5,9 @@
 
 * Configuration and scripts for Create React App.
 * change react scripts for typescript and support some funcs
+* 支持开发工具debug
+    - WebStorm debug模式设置
+        1. debug Configuration中选择Javascript debug
+        2. 填写url地址
+        3. 启动本地服务
+        4. 通过debug按钮或者Alt+Shift+D 打开调试窗口
