@@ -4,7 +4,7 @@
     "description": "Configuration and scripts for Create React App.",
     "repository": {
         "type": "git",
-        "url": "git@github.com:yanxianliang/react-ts-script.git"
+        "url": "git@github.com:yanxianliang/rc-ts-script.git"
     },
     "license": "MIT",
     "engines": {
