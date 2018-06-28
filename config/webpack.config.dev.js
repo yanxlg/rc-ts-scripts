@@ -24,7 +24,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-
+const dirUtil = require("./dirUtil");
 const CleanPlugin = require('./clean-css');
 const importJson =  require('./sass-import-json');
 
@@ -34,23 +34,7 @@ const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const projectConfig=require(paths.appPackageJson);
 const proj_name=projectConfig.name;
 
-const hashCode = function(str){
-    let hash = 0;
-    if (str.length === 0) return hash;
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash<<5)-hash)+char;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    
-    if(hash.toString().indexOf("_")===0){
-        return hash;
-    }else{
-        return "_"+hash;
-    }
-};
-
-const assertDir=`static${hashCode(proj_name).toString().replace(/-/g,"_")}`;
+const assertDir=dirUtil(proj_name);
 
 
 

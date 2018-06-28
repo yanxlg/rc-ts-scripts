@@ -33,7 +33,7 @@ const path = require('path');
 const chalk = require('chalk');
 const fs = require('fs-extra');
 const webpack = require('webpack');
-
+const dirUtil = require("../config/dirUtil");
 
 //支持自定义prod config
 
@@ -196,23 +196,7 @@ function copyPublicFolder() {
     const projectConfig=require(paths.appPackageJson);
     const proj_name=projectConfig.name;
     
-    const hashCode = function(str){
-        let hash = 0;
-        if (str.length === 0) return hash;
-        for (let i = 0; i < str.length; i++) {
-            const char = str.charCodeAt(i);
-            hash = ((hash<<5)-hash)+char;
-            hash = hash & hash; // Convert to 32bit integer
-        }
-        if(hash.toString().indexOf("_")===0){
-            return hash;
-        }else{
-            return "_"+hash;
-        }
-    };
-    
-    const assertDir=`static${hashCode(proj_name).toString().replace(/-/g,"_")}`;
-    
+    const assertDir=dirUtil(proj_name);
     
     fs.copySync(paths.appPublic, path.join(paths.appBuild,assertDir), {
         dereference: true,

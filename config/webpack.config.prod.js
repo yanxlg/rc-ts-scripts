@@ -26,6 +26,7 @@ const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const CleanPlugin = require('./clean-css');
 const importJson =  require('./sass-import-json');
+const dirUtil = require("./dirUtil");
 
 
 
@@ -43,25 +44,7 @@ const shouldUseSourceMap = !!process.env.GENERATE_SOURCEMAP;//是否生成source
 const projectConfig=require(paths.appPackageJson);
 const proj_name=projectConfig.name;
 
-const hashCode = function(str){
-    let hash = 0;
-    if (str.length === 0) return hash;
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash<<5)-hash)+char;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    //判断是否存在_
-    if(hash.toString().indexOf("_")===0){
-        return hash;
-    }else{
-        return "_"+hash;
-    }
-};
-
-const assertDir=`static${hashCode(proj_name).toString().replace(/-/g,"_")}`;
-
-
+const assertDir=dirUtil(proj_name);
 
 
 
