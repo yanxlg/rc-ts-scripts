@@ -40,10 +40,6 @@ const dirUtil = require("../config/dirUtil");
 const appDirectory = fs.realpathSync(process.cwd());
 const prodConfigExist = fs.existsSync(path.join(appDirectory,"/config/webpack.config.prod.js"));
 
-if(prodConfigExist){
-    console.log("use custom prod config".green);
-}
-
 const config = prodConfigExist?require(path.join(appDirectory,"/config/webpack.config.prod.js")):require('../config/webpack.config.prod.js');
 
 

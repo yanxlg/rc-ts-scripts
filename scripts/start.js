@@ -54,10 +54,6 @@ const appDirectory = fs.realpathSync(process.cwd());
 
 const devConfigExist = fs.existsSync(path.join(appDirectory,"/config/webpack.config.dev.js"));
 
-if(devConfigExist){
-    console.log("use custom dev config".green);
-}
-
 const config = devConfigExist?require(path.join(appDirectory,"/config/webpack.config.dev.js")):require('../config/webpack.config.dev.js');
 
 
@@ -121,9 +117,7 @@ checkBrowsers(paths.appPath)
     const protocol = process.env.HTTPS === 'true' ? 'https' : 'http';
     const appName = require(paths.appPackageJson).name;
     
-    const nginxPort = parseInt(process.env.Nginx, 10) || port;
-    
-    const urls = prepareUrls(protocol, HOST, nginxPort);
+    const urls = prepareUrls(protocol, HOST, port);
     // Create a webpack compiler that is configured with custom messages.
     const compiler = createCompiler(webpack, config, appName, urls, useYarn);
     // Load proxy config
