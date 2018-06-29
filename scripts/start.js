@@ -61,9 +61,6 @@ const config = devConfigExist?require(path.join(appDirectory,"/config/webpack.co
 
 const devServerConfigExist = fs.existsSync(path.join(appDirectory,"/config/webpackDevServer.config.js"));
 
-if(devServerConfigExist){
-    console.log("use custom devServer config".green);
-}
 
 const createDevServerConfig = devServerConfigExist?require(path.join(__dirname,"config/webpackDevServer.config.js")):require('../config/webpackDevServer.config.js');
 

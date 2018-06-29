@@ -26,9 +26,6 @@ const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
 const pathsConfigExist = fs.existsSync(
     path.join(appDirectory, '/config/scripts.json'));
 
-if (pathsConfigExist) {
-    console.log('use custom config'.green);
-}
 
 const pathsConfig = pathsConfigExist ? require(
     path.join(appDirectory, '/config/scripts.json')) : {};
