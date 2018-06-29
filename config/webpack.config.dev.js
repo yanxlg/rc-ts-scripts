@@ -289,6 +289,24 @@ module.exports = {
         }),
         new webpack.NamedModulesPlugin(),
         new webpack.DefinePlugin(env.stringified),
+        new webpack.optimize.UglifyJsPlugin({
+            compress: {
+                warnings: false,
+                comparisons: false,
+                drop_debugger: true,
+                drop_console: true
+            },
+            mangle: {
+                safari10: true,
+            },
+            output: {
+                comments: false,
+                // Turned on because emoji and regex is not minified properly using default
+                // https://github.com/facebookincubator/create-react-app/issues/2488
+                ascii_only: true,
+            },
+            sourceMap: true,
+        }),
         new webpack.HotModuleReplacementPlugin(),
         new CaseSensitivePathsPlugin(),
         new WatchMissingNodeModulesPlugin(paths.appNodeModules),
