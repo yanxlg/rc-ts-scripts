@@ -89,6 +89,10 @@ module.exports = {
             {
                 oneOf: [
                     {
+                        test:/\.worker\.js$/,
+                        use: { loader: 'worker-loader',options: { name: 'workers/[hash].worker.js'}}
+                    },
+                    {
                         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
                         loader: require.resolve('url-loader'),
                         options: {
