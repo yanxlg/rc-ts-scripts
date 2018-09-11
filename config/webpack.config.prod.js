@@ -102,7 +102,7 @@ module.exports = {
         filename: `${assertDir}/bundle/[name].[chunkhash:8].js`,
         chunkFilename: `${assertDir}/bundle/[name].[chunkhash:8].chunk.js`,
         // We inferred the "public path" (such as / or /my-project) from homepage.
-        publicPath: publicPath,
+        // publicPath: publicPath, // 相对路径
         // Point sourcemap entries to original disk location (format as URL on Windows)
         devtoolModuleFilenameTemplate: info =>
             path
@@ -241,40 +241,13 @@ module.exports = {
                         use: [{
                                 loader: require.resolve('babel-loader'),
                                 options: {
-                                    compact:true,
+                                    compact: true,
                                     // @remove-on-eject-begin
                                     babelrc: false,
-                                    presets: ["env","stage-3","react-app"],
+                                    presets: ["env", "stage-3", "react-app"],
                                     // @remove-on-eject-end
-                                    plugins:["transform-remove-strict-mode","babel-plugin-add-module-exports","babel-plugin-react-require","babel-plugin-syntax-dynamic-import","babel-plugin-transform-decorators",["imports-transform", {
-                                        "antd":{
-                                            "transform": "antd/es/${member}",
-                                            "preventFullImport": true,
-                                            "kebabCase":true
-                                        },
-                                        "ant-design-pro":{
-                                            "transform": "ant-design-pro/es/${member}",
-                                            "preventFullImport": true
-                                        },
-                                        "kxt": {
-                                            "transform": "kxt/lib/${member}",
-                                            "preventFullImport": true,
-                                            "kebabCase":true
-                                        }
-                                    }],["import", [{
-                                        "libraryName": "antd",
-                                        "libraryDirectory": "es",
-                                        "style": false
-                                    },{
-                                        "libraryName": "ant-design-pro",
-                                        "libraryDirectory": "es",
-                                        "style": false
-                                    },{
-                                        "libraryName": "kxt",
-                                        "libraryDirectory": "lib",
-                                        "style": false
-                                    }]]]
-                                },
+                                    plugins: paths.plugin
+                                }
                             },
                             {
                                 loader: require.resolve('ts-loader'),
@@ -494,18 +467,6 @@ module.exports = {
             title: paths.webName,
             filename: `index.html`,
             template: paths.appHtml,
-            minify: {
-                removeComments: true,
-                collapseWhitespace: true,
-                removeRedundantAttributes: true,
-                useShortDoctype: true,
-                removeEmptyAttributes: true,
-                removeStyleLinkTypeAttributes: true,
-                keepClosingSlash: true,
-                minifyJS: true,
-                minifyCSS: true,
-                minifyURLs: true,
-            },
             chunks:["bundle","polyfill","react","axios"],
             chunksSortMode:function(a,b) {
                 let index={"polyfill":1,"react":2,"axios":3,"bundle":4},
