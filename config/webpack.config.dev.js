@@ -57,7 +57,7 @@ module.exports = {
         pathinfo: true,
         filename: `${assertDir}/business/[name]_[hash:8].js`,
         chunkFilename: `${assertDir}/business/[name].chunk.js`,
-        // publicPath: publicPath,// 使用相对路径
+        publicPath: publicPath,// 使用相对路径
         devtoolModuleFilenameTemplate: info =>
             path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
     },

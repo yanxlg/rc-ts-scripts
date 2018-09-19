@@ -102,7 +102,7 @@ module.exports = {
         filename: `${assertDir}/bundle/[name].[chunkhash:8].js`,
         chunkFilename: `${assertDir}/bundle/[name].[chunkhash:8].chunk.js`,
         // We inferred the "public path" (such as / or /my-project) from homepage.
-        // publicPath: publicPath, // 相对路径
+        publicPath: publicPath, // 相对路径
         // Point sourcemap entries to original disk location (format as URL on Windows)
         devtoolModuleFilenameTemplate: info =>
             path
