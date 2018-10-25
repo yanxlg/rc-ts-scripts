@@ -90,7 +90,7 @@ module.exports = {
                 oneOf: [
                     {
                         test:/\.worker\.js$/,
-                        use: { loader: 'worker-loader',options: { name: 'workers/[hash].worker.js'}}
+                        use: { loader: 'worker-loader',options: { name: 'workers/[hash].worker.js',inline: true}}
                     },
                     {
                         test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],

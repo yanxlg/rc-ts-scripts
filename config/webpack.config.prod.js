@@ -171,7 +171,7 @@ module.exports = {
                 oneOf: [
                     {
                         test:/\.worker\.js$/,
-                        use: { loader: 'worker-loader',options: { name: 'workers/[hash].worker.js'}}
+                        use: { loader: 'worker-loader',options: { name: 'workers/[hash].worker.js',inline: true}}
                     },
                     // "url" loader works just like "file" loader but it also embeds
                     // assets smaller than specified size as data URLs to avoid requests.

@@ -1,6 +1,6 @@
 {
     "name": "rc-ts-scripts",
-    "version": "1.1.4",
+    "version": "1.1.6",
     "description": "Configuration and scripts for Create React App.",
     "repository": {
         "type": "git",
