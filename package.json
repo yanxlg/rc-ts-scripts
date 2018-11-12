@@ -1,6 +1,6 @@
 {
     "name": "rc-ts-scripts",
-    "version": "1.1.6",
+    "version": "1.1.7",
     "description": "Configuration and scripts for Create React App.",
     "repository": {
         "type": "git",
@@ -99,12 +99,6 @@
         "ts-loader": "^3.5.0",
         "less":"^2.7.3",
         "less-loader": "^4.0.5",
-        "sass": "^1.0.0-beta.5.2",
-        "node-sass": "^4.7.2",
-        "sass-loader": "^6.0.6",
-        "node-sass-import-once": "1.2.0",
-        "node-sass-json-importer": "3.0.2",
-        "sass-import-once": "0.2.0",
         "babel-polyfill": "^6.26.0",
         "axios": "^0.17.1",
         "resolve-url-loader": "^2.2.1",
