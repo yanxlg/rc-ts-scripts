@@ -73,7 +73,7 @@ module.exports = {
             'react-native': 'react-native-web',
         },
         plugins: [
-            new ModuleScopePlugin(paths.appSrcDirs, [paths.appPackageJson]),
+            // new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
             new TsconfigPathsPlugin({ configFile: paths.appTsConfig }),
         ],
     },
@@ -84,7 +84,7 @@ module.exports = {
                   test: /\.(js|jsx|mjs)$/,
                   enforce: 'pre',
                   loader: require.resolve('source-map-loader'),
-                  include: paths.appSrcDirs,// allow outside of src/
+                  // include: paths.appSrc,// allow outside of src/
               },
             {
                 oneOf: [
