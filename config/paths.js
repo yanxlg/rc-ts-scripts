@@ -69,6 +69,8 @@ module.exports = {
     appIndexJs: resolveApp(pathsConfig.appIndexJs || 'src/index.js'),
     appPackageJson: resolveApp('package.json'),
     appSrc: resolveApp('src'),
+    appSrcDirs:pathsConfig.appSrcDirs?typeof pathsConfig.appSrcDirs === "string"?resolveApp(
+        pathsConfig.appSrcDirs):pathsConfig.appSrcDirs.map((srcDir)=>resolveApp(srcDir)):resolveApp('src'),
     yarnLockFile: resolveApp('yarn.lock'),
     testsSetup: resolveApp('src/setupTests.js'),
     appNodeModules: resolveApp('node_modules'),
@@ -98,6 +100,8 @@ module.exports = {
     appIndexJs: resolveApp(pathsConfig.appIndexJs || 'src/index.js'),
     appPackageJson: resolveApp('package.json'),
     appSrc: resolveApp('src'),
+    appSrcDirs:pathsConfig.appSrcDirs?typeof pathsConfig.appSrcDirs === "string"?resolveApp(
+        pathsConfig.appSrcDirs):pathsConfig.appSrcDirs.map((srcDir)=>resolveApp(srcDir)):resolveApp('src'),
     yarnLockFile: resolveApp('yarn.lock'),
     testsSetup: resolveApp('src/setupTests.js'),
     appNodeModules: resolveApp('node_modules'),
@@ -134,6 +138,8 @@ if (useTemplate) {
             `template/${pathsConfig.appIndexJs || 'src/index.js'}`),
         appPackageJson: resolveOwn('package.json'),
         appSrc: resolveOwn('template/src'),
+        appSrcDirs:pathsConfig.appSrcDirs?typeof pathsConfig.appSrcDirs === "string"?resolveOwn(
+            pathsConfig.appSrcDirs):pathsConfig.appSrcDirs.map((srcDir)=>resolveOwn(srcDir)):resolveOwn('template/src'),
         yarnLockFile: resolveOwn('template/yarn.lock'),
         testsSetup: resolveOwn('template/src/setupTests.js'),
         appNodeModules: resolveOwn('node_modules'),
