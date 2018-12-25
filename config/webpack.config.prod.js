@@ -145,7 +145,7 @@ module.exports = {
             // To fix this, we prevent you from importing files out of src/ -- if you'd like to,
             // please link the files into your node_modules/ and let module-resolution kick in.
             // Make sure your source files are compiled, as they will not be processed in any way.
-            new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
+            // new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]), // allow outside of src/
             new TsconfigPathsPlugin({ configFile: paths.appTsConfig }),
         ],
     },
@@ -162,7 +162,7 @@ module.exports = {
                 test: /\.(js|jsx|mjs)$/,
                 loader: require.resolve('source-map-loader'),
                 enforce: 'pre',
-                include: paths.appSrc,
+                // include: paths.appSrc,  // allow outside of src/
             },
             {
                 // "oneOf" will traverse all following loaders until one will
