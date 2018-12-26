@@ -11,17 +11,11 @@
 const path = require('path');
 const fs = require('fs');
 const url = require('url');
-const findPkg = require('find-pkg');
-const globby = require('globby');
-
-require('colors');
 
 // Make sure any symlinks in the project folder are resolved:
 // https://github.com/facebook/create-react-app/issues/637
 const appDirectory = fs.realpathSync(process.cwd());
 const resolveApp = relativePath => path.resolve(appDirectory, relativePath);
-
-//判断配置文件是否存在，如果存在则从配置文件读取，否则使用默认
 
 const pathsConfigExist = fs.existsSync(
     path.join(appDirectory, '/config/scripts.json'));
@@ -30,16 +24,18 @@ const pathsConfigExist = fs.existsSync(
 const pathsConfig = pathsConfigExist ? require(
     path.join(appDirectory, '/config/scripts.json')) : {};
 
+
+
 const envPublicUrl = process.env.PUBLIC_URL;
 
-function ensureSlash(path, needsSlash) {
-    const hasSlash = path.endsWith('/');
+function ensureSlash(inputPath, needsSlash) {
+    const hasSlash = inputPath.endsWith('/');
     if (hasSlash && !needsSlash) {
-        return path.substr(path, path.length - 1);
+        return inputPath.substr(0, inputPath.length - 1);
     } else if (!hasSlash && needsSlash) {
-        return `${path}/`;
+        return `${inputPath}/`;
     } else {
-        return path;
+        return inputPath;
     }
 }
 
@@ -59,6 +55,33 @@ function getServedPath(appPackageJson) {
     return ensureSlash(servedUrl, true);
 }
 
+const moduleFileExtensions = [
+    'web.mjs',
+    'mjs',
+    'web.js',
+    'js',
+    'web.ts',
+    'ts',
+    'web.tsx',
+    'tsx',
+    'json',
+    'web.jsx',
+    'jsx',
+];
+
+// Resolve file paths in the same order as webpack
+const resolveModule = (resolveFn, filePath) => {
+    const extension = moduleFileExtensions.find(extension =>
+        fs.existsSync(resolveFn(`${filePath}.${extension}`))
+    );
+    
+    if (extension) {
+        return resolveFn(`${filePath}.${extension}`);
+    }
+    
+    return resolveFn(`${filePath}.js`);
+};
+
 // config after eject: we're in ./config/
 module.exports = {
     dotenv: resolveApp(pathsConfig.dotenv || '.env'),
@@ -69,6 +92,8 @@ module.exports = {
     appIndexJs: resolveApp(pathsConfig.appIndexJs || 'src/index.js'),
     appPackageJson: resolveApp('package.json'),
     appSrc: resolveApp('src'),
+    appSrcDirs:pathsConfig.appSrcDirs ? typeof pathsConfig.appSrcDirs === "string"?resolveApp(
+        pathsConfig.appSrcDirs):pathsConfig.appSrcDirs.map((appSrc)=>resolveApp(appSrc)) : resolveApp('src'),
     yarnLockFile: resolveApp('yarn.lock'),
     testsSetup: resolveApp('src/setupTests.js'),
     appNodeModules: resolveApp('node_modules'),
@@ -83,8 +108,6 @@ module.exports = {
     plugin:pathsConfig.plugin||null
 };
 
-let checkForMonorepo = true;
-
 // @remove-on-eject-begin
 const resolveOwn = relativePath => path.resolve(__dirname, '..', relativePath);
 
@@ -98,6 +121,8 @@ module.exports = {
     appIndexJs: resolveApp(pathsConfig.appIndexJs || 'src/index.js'),
     appPackageJson: resolveApp('package.json'),
     appSrc: resolveApp('src'),
+    appSrcDirs:pathsConfig.appSrcDirs ? typeof pathsConfig.appSrcDirs === "string"?resolveApp(
+        pathsConfig.appSrcDirs):pathsConfig.appSrcDirs.map((appSrc)=>resolveApp(appSrc)) : resolveApp('src'),
     yarnLockFile: resolveApp('yarn.lock'),
     testsSetup: resolveApp('src/setupTests.js'),
     appNodeModules: resolveApp('node_modules'),
@@ -116,13 +141,17 @@ module.exports = {
     plugin:pathsConfig.plugin||null
 };
 
-// detect if template should be used, ie. when cwd is react-scripts itself
-const useTemplate =
-    appDirectory === fs.realpathSync(path.join(__dirname, '..'));
+const ownPackageJson = require('../package.json');
+const reactScriptsPath = resolveApp(`node_modules/${ownPackageJson.name}`);
+const reactScriptsLinked =
+    fs.existsSync(reactScriptsPath) &&
+    fs.lstatSync(reactScriptsPath).isSymbolicLink();
 
-checkForMonorepo = !useTemplate;
-
-if (useTemplate) {
+// config before publish: we're in ./packages/react-scripts/config/
+if (
+    !reactScriptsLinked &&
+    __dirname.indexOf(path.join('packages', 'react-scripts', 'config')) !== -1
+) {
     module.exports = {
         dotenv: resolveOwn(`template/${pathsConfig.dotenv || '.env'}`),
         appPath: resolveApp(pathsConfig.appPath || '.'),
@@ -134,6 +163,8 @@ if (useTemplate) {
             `template/${pathsConfig.appIndexJs || 'src/index.js'}`),
         appPackageJson: resolveOwn('package.json'),
         appSrc: resolveOwn('template/src'),
+        appSrcDirs:pathsConfig.appSrcDirs ? typeof pathsConfig.appSrcDirs === "string"?resolveOwn(
+            pathsConfig.appSrcDirs):pathsConfig.appSrcDirs.map((appSrc)=>resolveOwn(appSrc)) : resolveOwn('template/src'),
         yarnLockFile: resolveOwn('template/yarn.lock'),
         testsSetup: resolveOwn('template/src/setupTests.js'),
         appNodeModules: resolveOwn('node_modules'),
@@ -154,41 +185,4 @@ if (useTemplate) {
 }
 // @remove-on-eject-end
 
-module.exports.srcPaths = [module.exports.appSrc];
-
-const findPkgs = (rootPath, globPatterns) => {
-    const globOpts = {
-        cwd: rootPath,
-        strict: true,
-        absolute: true,
-    };
-    return globPatterns.reduce(
-        (pkgs, pattern) =>
-            pkgs.concat(
-                globby.sync(path.join(pattern, 'package.json'), globOpts)),
-        [],
-    ).map(f => path.dirname(path.normalize(f)));
-};
-
-const getMonorepoPkgPaths = () => {
-    const monoPkgPath = findPkg.sync(path.resolve(appDirectory, '..'));
-    if (monoPkgPath) {
-        // get monorepo config from yarn workspace
-        const pkgPatterns = require(monoPkgPath).workspaces;
-        if (pkgPatterns == null) {
-            return [];
-        }
-        const pkgPaths = findPkgs(path.dirname(monoPkgPath), pkgPatterns);
-        // only include monorepo pkgs if app itself is included in monorepo
-        if (pkgPaths.indexOf(appDirectory) !== -1) {
-            return pkgPaths.filter(f => fs.realpathSync(f) !== appDirectory);
-        }
-    }
-    return [];
-};
-
-if (checkForMonorepo) {
-    // if app is in a monorepo (lerna or yarn workspace), treat other packages in
-    // the monorepo as if they are app source
-    Array.prototype.push.apply(module.exports.srcPaths, getMonorepoPkgPaths());
-}
+module.exports.moduleFileExtensions = moduleFileExtensions;

@@ -30,6 +30,10 @@ const importJson =  require('./sass-import-json');
 
 const TsconfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 
+const HappyPack = require("happypack");
+const os =require("os");
+const happyThreadPool = HappyPack.ThreadPool({size:os.cpus().length});
+
 
 const projectConfig=require(paths.appPackageJson);
 const proj_name=projectConfig.name;
@@ -43,6 +47,8 @@ const publicUrl = '/'+assertDir;
 const env = getClientEnvironment(publicUrl);
 
 module.exports = {
+    name:"browser",
+    mode:"development",
     devtool: 'cheap-module-source-map',
     entry: {
         "polyfill":["babel-polyfill",require.resolve('./polyfills')],
@@ -61,6 +67,35 @@ module.exports = {
         devtoolModuleFilenameTemplate: info =>
             path.resolve(info.absoluteResourcePath).replace(/\\/g, '/'),
     },
+    optimization:{
+        minimize:false,
+        namedModules:true,
+        namedChunks:true,
+        splitChunks: {
+            chunks: 'all',
+            minChunks: Infinity,
+            cacheGroups: {
+                react: {
+                    name:"react",
+                    minChunks:Infinity,
+                    minSize:100,
+                    priority: 10
+                },
+                axios: {
+                    name:"axios",
+                    minChunks:Infinity,
+                    minSize:100,
+                    priority: 9
+                },
+                polyfill: {
+                    name:"polyfill",
+                    minChunks:Infinity,
+                    minSize:100,
+                    priority: 8
+                },
+            }
+        }
+    },
     resolve: {
         modules: ['node_modules', paths.appNodeModules].concat(
             process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
@@ -73,7 +108,7 @@ module.exports = {
             'react-native': 'react-native-web',
         },
         plugins: [
-            // new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
+            new ModuleScopePlugin(paths.appSrcDirs, [paths.appPackageJson]),
             new TsconfigPathsPlugin({ configFile: paths.appTsConfig }),
         ],
     },
@@ -84,7 +119,7 @@ module.exports = {
                   test: /\.(js|jsx|mjs)$/,
                   enforce: 'pre',
                   loader: require.resolve('source-map-loader'),
-                  // include: paths.appSrc,// allow outside of src/
+                  include: paths.appSrcDirs,// allow outside of src/
               },
             {
                 oneOf: [
@@ -116,6 +151,10 @@ module.exports = {
                     },
                     {
                         test: /\.(js|jsx|mjs)$/,
+                        use:"happypack/loader?id=jsx",
+                    },
+              /*      {
+                        test: /\.(js|jsx|mjs)$/,
                         loader: require.resolve('babel-loader'),
                         options: {
                             // @remove-on-eject-begin
@@ -124,8 +163,12 @@ module.exports = {
                             // @remove-on-eject-end
                             plugins:paths.plugin
                         },
-                    },
+                    },*/
                     {
+                        test: /\.(ts|tsx)$/,
+                        use:"happypack/loader?id=tsx",
+                    },
+          /*          {
                         test: /\.(ts|tsx)$/,
                         use: [{
                             loader: require.resolve('babel-loader'),
@@ -144,7 +187,7 @@ module.exports = {
                                 },
                             }
                         ],
-                    },
+                    },*/
                     {
                         test: /\.css$/,
                         use: [
@@ -213,13 +256,16 @@ module.exports = {
                                 }
                             },
                             {
+                                loader:"happypack/loader?id=sass",
+                            },
+                         /*   {
                                 loader: 'sass-loader',
                                 options: {
                                     importer: [importJson],
                                     data: '$rootPath: "./src";',
                                     sourceMap:true
                                 },
-                            },
+                            },*/
                         ],
                     },
                     {
@@ -251,7 +297,10 @@ module.exports = {
                                     ],
                                 },
                             },
-                            require.resolve('less-loader'),
+                            {
+                                loader:"happypack/loader?id=less",
+                            }
+                            // require.resolve('less-loader'),
                         ],
                     },
                     {
@@ -266,11 +315,73 @@ module.exports = {
         ],
     },
     plugins: [
-        new webpack.optimize.CommonsChunkPlugin({
+        new HappyPack({
+            id:"jsx",
+            loaders:[{
+                loader: 'babel-loader',
+                options: {
+                    // @remove-on-eject-begin
+                    babelrc: false,
+                    presets: ["env","stage-3","react-app"],
+                    cacheDirectory:true,
+                    // @remove-on-eject-end
+                    plugins:paths.plugin
+                },
+            }],
+            threadPool:happyThreadPool,
+            verbose:true
+        }),
+        new HappyPack({
+            id:"tsx",
+            loaders: [{
+                loader: "babel-loader",
+                options: {
+                    // @remove-on-eject-begin
+                    babelrc: false,
+                    presets: ["env","stage-3","react-app"],
+                    // @remove-on-eject-end
+                    plugins:paths.plugin,
+                    cacheDirectory:true
+                },
+            },{
+                loader: "ts-loader",
+                options: {
+                    transpileOnly: true,
+                    configFile: paths.appTsConfig,
+                    happyPackMode:true
+                },
+            }],
+            threadPool:happyThreadPool,
+            verbose:true
+        }),
+        new HappyPack({
+            id:"less",
+            loaders: [{
+                loader: require.resolve('less-loader'),
+                options: { javascriptEnabled: true }
+            }],
+            threadPool:happyThreadPool,
+            verbose:true
+        }),
+        new HappyPack({
+            id:"sass",
+            loaders: [{
+                loader: require.resolve('sass-loader'),
+                options: {
+                    importer: [importJson],
+                    data: '$rootPath: "./src";',
+                    sourceMap:true,
+                    javascriptEnabled: true
+                }
+            }],
+            threadPool:happyThreadPool,
+            verbose:true
+        }),
+  /*      new webpack.optimize.CommonsChunkPlugin({
             names:["react","axios","polyfill"],
             filename:`${assertDir}/bundle/[name].[hash:8].js`,
             minChunks: Infinity
-        }),
+        }),*/
         new CopyWebpackPlugin([{
             from:paths.appPublic,
             to:path.join(assertDir),
@@ -278,7 +389,6 @@ module.exports = {
             ignore: [ '*index.html']
         }),
         new CleanPlugin(),
-        new InterpolateHtmlPlugin(env.raw),
         new HtmlWebpackPlugin({
             title: paths.webName,
             inject: true,
@@ -286,12 +396,12 @@ module.exports = {
             chunks:["bundle","polyfill","react","axios"],
             chunksSortMode:function(a,b) {
                 let index={"polyfill":1,"react":2,"axios":3,"bundle":4},
-                    aI=index[a.origins[0].name],
-                    bI=index[b.origins[0].name];
+                    aI=index[a],
+                    bI=index[b];
                 return aI&&bI?aI-bI:-1;
             }
         }),
-        new webpack.NamedModulesPlugin(),
+        new InterpolateHtmlPlugin(HtmlWebpackPlugin,env.raw),
         new webpack.DefinePlugin(env.stringified),
         new webpack.HotModuleReplacementPlugin(),
         new CaseSensitivePathsPlugin(),
