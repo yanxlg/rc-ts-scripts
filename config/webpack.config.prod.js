@@ -135,38 +135,11 @@ module.exports = {
                     },
                     {
                         test: /\.(js|jsx|mjs)$/,
-                        loader: 'babel-loader',
-                        options: {
-                            compact:true,
-                            // @remove-on-eject-begin
-                            babelrc: false,
-                            presets: ["env","stage-3","react-app"],
-                            cacheDirectory:true,
-                            // @remove-on-eject-end
-                            plugins:paths.plugin
-                        },
+                        use:"happypack/loader?id=jsx",
                     },
                     {
                         test: /\.(ts|tsx)$/,
-                        use:[{
-                            loader: "babel-loader",
-                            options: {
-                                compact:true,
-                                // @remove-on-eject-begin
-                                babelrc: false,
-                                presets: ["env","stage-3","react-app"],
-                                // @remove-on-eject-end
-                                plugins:paths.plugin,
-                                cacheDirectory:true
-                            },
-                        },{
-                            loader: "ts-loader",
-                            options: {
-                                transpileOnly: true,
-                                configFile: paths.appTsConfig,
-                                happyPackMode:true
-                            },
-                        }],
+                        use:"happypack/loader?id=tsx",
                     },
                     {
                         test: /\.css$/,
@@ -340,6 +313,47 @@ module.exports = {
         ],
     },
     plugins: [
+        new HappyPack({
+            id:"jsx",
+            loaders:[{
+                loader: 'babel-loader',
+                options: {
+                    compact:true,
+                    // @remove-on-eject-begin
+                    babelrc: false,
+                    presets: ["env","stage-3","react-app"],
+                    cacheDirectory:true,
+                    // @remove-on-eject-end
+                    plugins:paths.plugin
+                },
+            }],
+            threadPool:happyThreadPool,
+            verbose:true
+        }),
+        new HappyPack({
+            id:"tsx",
+            loaders: [{
+                loader: "babel-loader",
+                options: {
+                    compact:true,
+                    // @remove-on-eject-begin
+                    babelrc: false,
+                    presets: ["env","stage-3","react-app"],
+                    // @remove-on-eject-end
+                    plugins:paths.plugin,
+                    cacheDirectory:true
+                },
+            },{
+                loader: "ts-loader",
+                options: {
+                    transpileOnly: true,
+                    configFile: paths.appTsConfig,
+                    happyPackMode:true
+                },
+            }],
+            threadPool:happyThreadPool,
+            verbose:true
+        }),
         new CleanPlugin(),
         new HtmlWebpackPlugin({
             title: paths.webName,
