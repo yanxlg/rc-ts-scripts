@@ -15,16 +15,12 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin');
 const InterpolateHtmlPlugin = require('react-dev-utils/InterpolateHtmlPlugin');
 const WatchMissingNodeModulesPlugin = require('react-dev-utils/WatchMissingNodeModulesPlugin');
-const eslintFormatter = require('react-dev-utils/eslintFormatter');
 const ModuleScopePlugin = require('react-dev-utils/ModuleScopePlugin');
 const getClientEnvironment = require('./env');
 const paths = require('./paths');
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const CopyWebpackPlugin = require('copy-webpack-plugin');
-const dirUtil = require("./dirUtil");
 const CleanPlugin = require('./clean-css');
 const importJson =  require('./sass-import-json');
 
@@ -35,30 +31,20 @@ const os =require("os");
 const happyThreadPool = HappyPack.ThreadPool({size:os.cpus().length});
 
 
-const projectConfig=require(paths.appPackageJson);
-const proj_name=projectConfig.name;
-
-const assertDir=dirUtil(proj_name);
+const webpackConfig = require("./webpackConfig");
 
 
-
+const assertDir=webpackConfig.assertDir;
 const publicPath = '/';
 const publicUrl = '/'+assertDir;
+
 const env = getClientEnvironment(publicUrl);
 
 module.exports = {
     name:"browser",
     mode:"development",
     devtool: 'cheap-module-source-map',
-    entry: {
-        "polyfill":["babel-polyfill",require.resolve('./polyfills')],
-        'react':["react",'react-dom'],
-        'axios':['axios'],
-        "bundle":[
-            require.resolve('react-dev-utils/webpackHotDevClient'),
-            paths.appIndexJs
-        ]
-    },
+    entry: webpackConfig.entry,
     output: {
         pathinfo: true,
         filename: `${assertDir}/business/[name]_[hash:8].js`,
@@ -72,32 +58,12 @@ module.exports = {
         namedModules:true,
         namedChunks:true,
         splitChunks: {
-            chunks: 'all',
             minChunks: Infinity,
-            cacheGroups: {
-                react: {
-                    name:"react",
-                    minChunks:Infinity,
-                    minSize:100,
-                    priority: 10
-                },
-                axios: {
-                    name:"axios",
-                    minChunks:Infinity,
-                    minSize:100,
-                    priority: 9
-                },
-                polyfill: {
-                    name:"polyfill",
-                    minChunks:Infinity,
-                    minSize:100,
-                    priority: 8
-                },
-            }
+            cacheGroups: webpackConfig.cacheGroups
         }
     },
     resolve: {
-        modules: ['node_modules', paths.appNodeModules].concat(
+        modules: ['node_modules', paths.appNodeModules].concat(paths.appSrcDirs).concat(
             process.env.NODE_PATH.split(path.delimiter).filter(Boolean)
         ),
         extensions: [' ','.web.js', '.mjs', '.js', '.json', '.web.jsx', '.jsx','.ts', '.tsx', '.es6'],
@@ -153,41 +119,10 @@ module.exports = {
                         test: /\.(js|jsx|mjs)$/,
                         use:"happypack/loader?id=jsx",
                     },
-              /*      {
-                        test: /\.(js|jsx|mjs)$/,
-                        loader: require.resolve('babel-loader'),
-                        options: {
-                            // @remove-on-eject-begin
-                            babelrc: false,
-                            presets: ["env","stage-3","react-app"],
-                            // @remove-on-eject-end
-                            plugins:paths.plugin
-                        },
-                    },*/
                     {
                         test: /\.(ts|tsx)$/,
                         use:"happypack/loader?id=tsx",
                     },
-          /*          {
-                        test: /\.(ts|tsx)$/,
-                        use: [{
-                            loader: require.resolve('babel-loader'),
-                            options: {
-                                // @remove-on-eject-begin
-                                babelrc: false,
-                                presets: ["env","stage-3","react-app"],
-                                // @remove-on-eject-end
-                                plugins:paths.plugin
-                            },
-                        },{
-                                loader: require.resolve('ts-loader'),
-                                options: {
-                                    transpileOnly: true,
-                                    configFile: paths.appTsConfig
-                                },
-                            }
-                        ],
-                    },*/
                     {
                         test: /\.css$/,
                         use: [
@@ -256,16 +191,14 @@ module.exports = {
                                 }
                             },
                             {
-                                loader:"happypack/loader?id=sass",
-                            },
-                         /*   {
-                                loader: 'sass-loader',
+                                loader: require.resolve('sass-loader'),
                                 options: {
                                     importer: [importJson],
                                     data: '$rootPath: "./src";',
-                                    sourceMap:true
-                                },
-                            },*/
+                                    sourceMap:true,
+                                    javascriptEnabled: true
+                                }
+                            }
                         ],
                     },
                     {
@@ -298,9 +231,9 @@ module.exports = {
                                 },
                             },
                             {
-                                loader:"happypack/loader?id=less",
+                                loader: require.resolve('less-loader'),
+                                options: { javascriptEnabled: true }
                             }
-                            // require.resolve('less-loader'),
                         ],
                     },
                     {
@@ -354,34 +287,6 @@ module.exports = {
             threadPool:happyThreadPool,
             verbose:true
         }),
-        new HappyPack({
-            id:"less",
-            loaders: [{
-                loader: require.resolve('less-loader'),
-                options: { javascriptEnabled: true }
-            }],
-            threadPool:happyThreadPool,
-            verbose:true
-        }),
-        new HappyPack({
-            id:"sass",
-            loaders: [{
-                loader: require.resolve('sass-loader'),
-                options: {
-                    importer: [importJson],
-                    data: '$rootPath: "./src";',
-                    sourceMap:true,
-                    javascriptEnabled: true
-                }
-            }],
-            threadPool:happyThreadPool,
-            verbose:true
-        }),
-  /*      new webpack.optimize.CommonsChunkPlugin({
-            names:["react","axios","polyfill"],
-            filename:`${assertDir}/bundle/[name].[hash:8].js`,
-            minChunks: Infinity
-        }),*/
         new CopyWebpackPlugin([{
             from:paths.appPublic,
             to:path.join(assertDir),
@@ -393,9 +298,9 @@ module.exports = {
             title: paths.webName,
             inject: true,
             template: paths.appHtml,
-            chunks:["bundle","polyfill","react","axios"],
+            chunks:webpackConfig.chunks,
             chunksSortMode:function(a,b) {
-                let index={"polyfill":1,"react":2,"axios":3,"bundle":4},
+                let index={"polyfill":1,"react":2,"axios":3,"bundle":4,"index":5},
                     aI=index[a],
                     bI=index[b];
                 return aI&&bI?aI-bI:-1;
@@ -407,12 +312,6 @@ module.exports = {
         new CaseSensitivePathsPlugin(),
         new WatchMissingNodeModulesPlugin(paths.appNodeModules),
         new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
-      /*  new ForkTsCheckerWebpackPlugin({
-            async: true,
-            watch: paths.appSrc,
-            tsconfig: paths.appTsConfig,
-            tslint: paths.appTsLint,
-        }),*/
     ],
     node: {
         dgram: 'empty',

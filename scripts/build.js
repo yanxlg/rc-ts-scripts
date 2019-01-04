@@ -51,6 +51,7 @@ const printHostingInstructions = require('react-dev-utils/printHostingInstructio
 const FileSizeReporter = require('react-dev-utils/FileSizeReporter');
 const printBuildError = require('react-dev-utils/printBuildError');
 const { printBrowsers } = require('./utils/browsersHelper');
+const webpackConfig = require("../config/webpackConfig");
 
 const measureFileSizesBeforeBuild =
   FileSizeReporter.measureFileSizesBeforeBuild;
@@ -189,10 +190,7 @@ function checkExist(excludes, file) {
 function copyPublicFolder() {
     //需要包括exclude文件或文件夹复制到root目录
     const excludes=paths.excludes;
-    const projectConfig=require(paths.appPackageJson);
-    const proj_name=projectConfig.name;
-    
-    const assertDir=dirUtil(proj_name);
+    const assertDir=webpackConfig.assertDir;
     
     fs.copySync(paths.appPublic, path.join(paths.appBuild,assertDir), {
         dereference: true,
