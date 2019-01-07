@@ -59,6 +59,7 @@ const cssFilename = `${assertDir}/css/[name].[hash:8].css`;
 
 module.exports = {
     bail: true,
+    mode:"production",
     devtool: shouldUseSourceMap ? 'source-map' : false,
     entry: webpackConfig.entry,
     output: {
