@@ -55,7 +55,7 @@ if(reactProj){
 }else{
     cacheGroups=false;
     entry={
-        index:["babel-polyfill",paths.appIndexJs,require.resolve('react-dev-utils/webpackHotDevClient')]
+        index:["babel-polyfill",paths.appIndexJs,process.env.NODE_ENV === 'production'?null:require.resolve('react-dev-utils/webpackHotDevClient')].filter(Boolean)
     };// 普通项目
     chunks=["index"];
 }

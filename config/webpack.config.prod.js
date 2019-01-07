@@ -76,10 +76,10 @@ module.exports = {
         minimize:true,
         namedModules:true,
         namedChunks:true,
-        splitChunks: {
+        splitChunks: webpackConfig.cacheGroups?{
             minChunks: Infinity,
             cacheGroups: webpackConfig.cacheGroups
-        }
+        }:false
     },
     resolve: {
         modules: ['node_modules', paths.appNodeModules].concat(paths.appSrcDirs).concat(
