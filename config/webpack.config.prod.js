@@ -48,13 +48,12 @@ if (env.stringified['process.env'].NODE_ENV !== '"production"') {
 }
 
 
+const cssFilename = `${assertDir}/css/[name].[hash:8].css`;
+
 const extractTextPluginOptions = shouldUseRelativeAssetPaths
     ? // Making sure that the publicPath goes back to to build folder.
     { publicPath: Array(cssFilename.split('/').length).join('../') }
     : {};
-
-
-const cssFilename = `${assertDir}/css/[name].[hash:8].css`;
 
 
 module.exports = {
