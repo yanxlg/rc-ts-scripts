@@ -372,6 +372,7 @@ module.exports = {
         // Minify the code.
         new ExtractTextPlugin({
             filename: cssFilename,
+            allChunks:true
         }),
         new ManifestPlugin({
             fileName: `${assertDir}/asset-manifest.json`,
