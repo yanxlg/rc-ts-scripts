@@ -1,6 +1,6 @@
 {
   "name": "rc-ts-scripts",
-  "version": "1.7.0",
+  "version": "1.7.1",
   "description": "Configuration and scripts for Create React App.",
   "repository": "facebook/create-react-app",
   "license": "MIT",
