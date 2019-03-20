@@ -1,6 +1,6 @@
 {
   "name": "rc-ts-scripts",
-  "version": "1.6.9",
+  "version": "1.7.0",
   "description": "Configuration and scripts for Create React App.",
   "repository": "facebook/create-react-app",
   "license": "MIT",
@@ -124,7 +124,9 @@
     "webpack-manifest-plugin": "2.0.4",
     "workbox-webpack-plugin": "3.6.3",
     "happypack": "^5.0.0",
-    "os": "^0.1.1"
+    "os": "^0.1.1",
+    "postcss-px2rem": "^0.3.0",
+    "postcss-plugin-px2rem": "^0.8.1"
   },
   "devDependencies": {
     "react": "^16.3.2",

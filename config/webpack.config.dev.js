@@ -40,6 +40,14 @@ const publicUrl = '/'+assertDir;
 
 const env = getClientEnvironment(publicUrl);
 
+const appDirectory = fs.realpathSync(process.cwd());
+const pathsConfigExist = fs.existsSync(
+    path.join(appDirectory, '/config/scripts.json'));
+
+const buildConfig = pathsConfigExist ? require(
+    path.join(appDirectory, '/config/scripts.json')) : {};
+
+
 module.exports = {
     name:"browser",
     mode:"development",
@@ -149,7 +157,7 @@ module.exports = {
                                             ],
                                             flexbox: 'no-2009',
                                         }),
-                                    ],
+                                    ].concat(buildConfig.convertRem?require("postcss-plugin-px2rem")(buildConfig.convertRem):[]),
                                 },
                             },
                         ],
@@ -180,7 +188,7 @@ module.exports = {
                                             ],
                                             flexbox: 'no-2009',
                                         }),
-                                    ],
+                                    ].concat(buildConfig.convertRem?require("postcss-plugin-px2rem")(buildConfig.convertRem):[]),
                                 },
                             },
                             {
@@ -227,7 +235,7 @@ module.exports = {
                                             ],
                                             flexbox: 'no-2009',
                                         }),
-                                    ],
+                                    ].concat(buildConfig.convertRem?require("postcss-plugin-px2rem")(buildConfig.convertRem):[]),
                                 },
                             },
                             {
