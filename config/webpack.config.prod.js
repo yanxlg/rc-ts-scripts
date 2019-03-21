@@ -81,7 +81,7 @@ module.exports = {
             .replace(/\\/g, '/'),
     },
     optimization:{
-        minimize:true,
+        minimize:!buildConfig.showLog,
         namedModules:true,
         namedChunks:true,
         splitChunks: webpackConfig.cacheGroups?{
