@@ -80,14 +80,23 @@ module.exports = {
             .relative(paths.appSrc, info.absoluteResourcePath)
             .replace(/\\/g, '/'),
     },
-    optimization:{
-        minimize:!buildConfig.showLog,
-        namedModules:true,
-        namedChunks:true,
-        splitChunks: webpackConfig.cacheGroups?{
-            minChunks: Infinity,
-            cacheGroups: webpackConfig.cacheGroups
-        }:false
+    ...buildConfig.showLog?{
+    
+    }:{
+        optimization:{
+            minimize:true,
+            namedModules:true,
+            namedChunks:true,
+            splitChunks: webpackConfig.cacheGroups?{
+                minChunks: Infinity,
+                cacheGroups: webpackConfig.cacheGroups
+            }:false,
+            compress:{
+                warnings: false,
+                drop_debugger: true,
+                drop_console: true
+            }
+        },
     },
     resolve: {
         modules: ['node_modules', paths.appNodeModules].concat(paths.appSrcDirs).concat(
