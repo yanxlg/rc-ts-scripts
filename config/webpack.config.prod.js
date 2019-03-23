@@ -90,12 +90,7 @@ module.exports = {
             splitChunks: webpackConfig.cacheGroups?{
                 minChunks: Infinity,
                 cacheGroups: webpackConfig.cacheGroups
-            }:false,
-            compress:{
-                warnings: false,
-                drop_debugger: true,
-                drop_console: true
-            }
+            }:false
         },
     },
     resolve: {
