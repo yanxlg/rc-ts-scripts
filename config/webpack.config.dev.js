@@ -149,6 +149,10 @@ module.exports = {
                                     sourceMap: true,
                                     plugins: () => [
                                         require('postcss-flexbugs-fixes'),
+                                        require("css-mqpacker"),
+                                        require('cssnano')({
+                                            assets:"advanced"
+                                        }),
                                         autoprefixer({
                                             browsers: [
                                                 '>1%',
@@ -180,6 +184,10 @@ module.exports = {
                                     sourceMap: true,
                                     plugins: () => [
                                         require('postcss-flexbugs-fixes'),
+                                        require("css-mqpacker"),
+                                        require('cssnano')({
+                                            assets:"advanced"
+                                        }),
                                         autoprefixer({
                                             browsers: [
                                                 '>1%',
@@ -227,6 +235,10 @@ module.exports = {
                                     ident: 'postcss',
                                     plugins: () => [
                                         require('postcss-flexbugs-fixes'),
+                                        require("css-mqpacker"),
+                                        require('cssnano')({
+                                            assets:"advanced"
+                                        }),
                                         autoprefixer({
                                             browsers: [
                                                 '>1%',
