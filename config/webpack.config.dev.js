@@ -310,7 +310,7 @@ module.exports = {
         }),
         new CopyWebpackPlugin([{
             from:paths.appPublic,
-            to:path.join(assertDir),
+            to:path.join(publicPath),
         }], {
             ignore: [ '*index.html']
         }),
