@@ -346,7 +346,14 @@ module.exports = {
                     compact:true,
                     // @remove-on-eject-begin
                     babelrc: false,
-                    presets: ["env","stage-3","react-app"],
+                    presets: ["env","stage-3","react-app",[
+                        "@babel/preset-env", {
+                            "targets": {
+                                "chrome": "54",
+                                "ie": "10"
+                            },
+                            "useBuiltIns": "usage"
+                        }]],
                     cacheDirectory:true,
                     // @remove-on-eject-end
                     plugins:paths.plugin
@@ -363,7 +370,14 @@ module.exports = {
                     compact:true,
                     // @remove-on-eject-begin
                     babelrc: false,
-                    presets: ["env","stage-3","react-app"],
+                    presets: ["env","stage-3","react-app",[
+                        "@babel/preset-env", {
+                            "targets": {
+                                "chrome": "54",
+                                "ie": "10"
+                            },
+                            "useBuiltIns": "usage"
+                        }]],
                     // @remove-on-eject-end
                     plugins:paths.plugin,
                     cacheDirectory:true
