@@ -316,7 +316,6 @@ module.exports = {
         }),
         new CopyWebpackPlugin([{
             from:paths.appPublic,
-            to:path.join(publicPath),
         }], {
             ignore: [ '*index.html']
         }),
